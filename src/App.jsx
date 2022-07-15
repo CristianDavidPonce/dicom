@@ -1,23 +1,24 @@
 
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import CornerstoneViewport from 'react-cornerstone-viewport'
 import * as cornerstoneWADOImageLoader from 'cornerstone-wado-image-loader'
 import { useQuery } from 'react-query'
-import axios from 'axios'
-import { Alert, Button, Col, List, Menu, Row, Spin, Typography } from 'antd'
+import { Alert, Button, Col, List, Menu, Row, Skeleton, Spin, Typography } from 'antd'
 import cornerstone from 'cornerstone-core'
 import './App.css'
 import { CameraOutlined } from '@ant-design/icons'
+import api from './api'
 
 const App = () => {
   const [file, setFile] = useState()
   const queryParams = new URLSearchParams(window.location.search)
-  const term = queryParams.get('orden')
+  const orden = queryParams.get('orden')
+  console.log(orden)
+  const [dicomId, setDicomId] = useState()
   const [scale, setScale] = useState(1)
-  console.log(term)
   const [, setElement] = useState(null)
   const query = useQuery('1',
-    async () => await axios.get('https://dev-dot-innova-dot-artem-296122.uc.r.appspot.com/dicom/0002',
+    async () => await api.get(`/user/public/imagen/ordenes/${orden}/attachments/${dicomId}`,
       { responseType: 'blob' }), {
       enabled: false,
       onSuccess: (data) => {
@@ -35,28 +36,38 @@ const App = () => {
         )
       }
     })
-  useEffect(() => { query.refetch() }, [])
-  if (query.isError) {
-    return <Alert message={query.error?.message || 'Error al cargar la imagen'} type='error' action={
-    <Button
-    onClick={query.refetch}
-    >Reintentar</Button>
-  }/>
-  }
+  const lista = useQuery('files',
+    async () => await api.get(`/user/public/imagen/ordenes/${orden}/attachments`), {
+      staleTime: 0,
+      onSuccess: (data) => {
+        const dicoms = data.data.filter(x => x.mimetype === 'application/octet-stream')
+        if (dicoms[0]?._id !== undefined) {
+          setDicomId(dicoms[0]?._id)
+          query.refetch()
+        }
+      }
+    })
+
   return (
-    <Spin spinning={query.isFetching} style={{ minHeight: '50%' }}>
+<>
        <Row gutter={10}>
         <Col sx={{ span: 24 }} md={{ span: 4 }}>
-        <Menu
-      style={{ width: '100%' }}
-      defaultSelectedKeys={['1']}
-      defaultOpenKeys={['sub1']}
-      mode="inline"
-      items={[
-        { label: 'item 1', key: 'item-1', icon: <CameraOutlined /> },
-        { label: 'item 2', key: 'item-2', icon: <CameraOutlined /> }
-      ]}
+        {
+          lista.isFetching
+            ? <Skeleton/>
+            : <Menu
+          style={{ width: '100%' }}
+          defaultSelectedKeys={[lista.data?.data.filter(x => x.mimetype === 'application/octet-stream')[0]._id]}
+          mode="inline"
+          items={
+            lista.data?.data.filter(x => x.mimetype === 'application/octet-stream').map(x => ({
+              label: x.name,
+              key: x._id,
+              icon: <CameraOutlined/>
+            }))
+          }
     />
+    }
     <Alert type='info'
     closable
     message={'Ayuda'}
@@ -93,6 +104,12 @@ const App = () => {
     }/>
         </Col>
         <Col sx={{ span: 24 }} md={{ span: 20 }}>
+          {
+           query.isError && <Alert message={query.error?.message || 'Error al cargar la imagen'} type='error' action={
+              <Button
+              onClick={query.refetch}
+              >Reintentar</Button>
+          }/>}
         {
     file &&
       <CornerstoneViewport
@@ -129,7 +146,7 @@ const App = () => {
     <div style={{ display: 'flex', justifyContent: 'center' }}>
       <Typography.Text type='secondary'>Desarrollado por Departamento Tecnología, Innova-Salud S.A 2022</Typography.Text>
     </div>
-    </Spin>
+</>
   )
 }
 
