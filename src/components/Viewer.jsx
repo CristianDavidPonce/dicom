@@ -1,12 +1,11 @@
-import React, { useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
-import { useQuery } from 'react-query'
-import api from '../api'
 import * as cornerstoneWADOImageLoader from 'cornerstone-wado-image-loader'
 import CornerstoneViewport from 'react-cornerstone-viewport'
 import cornerstone from 'cornerstone-core'
-import { Alert, Button, InputNumber, List, notification, Segmented, Space, Spin } from 'antd'
+import { Button, InputNumber, List, notification, Segmented, Space } from 'antd'
 import { ArrowsAltOutlined, BgColorsOutlined, CaretRightOutlined, ColumnWidthOutlined, DeleteOutlined, DragOutlined, FormOutlined, LeftOutlined, PauseOutlined, QuestionOutlined, SearchOutlined, ZoomInOutlined } from '@ant-design/icons'
+import { Context } from '../Provider'
 const openNotification = () => {
   notification.open({
     message: 'Ayuda',
@@ -46,46 +45,34 @@ const openNotification = () => {
   })
 }
 const Viewer = ({ dicomId }) => {
-  const queryParams = new URLSearchParams(window.location.search)
-  const orden = queryParams.get('orden')
+  const { dicom } = useContext(Context)
   const [play, setPlay] = useState(false)
   const [active, setActive] = useState('Wwwc')
   const [file, setFile] = useState()
   const [frames, setFrames] = useState(10)
-  const query = useQuery(dicomId,
-    async () => await api.get(`/user/public/imagen/ordenes/${orden}/attachments/${dicomId}`,
-      { responseType: 'blob' }), {
-      enabled: !!dicomId,
-      staleTime: 'Infinity',
-      onSuccess: (data) => {
-        const imageId = cornerstoneWADOImageLoader.wadouri.fileManager.add(
-          data.data
-        )
-        cornerstone.loadImage(imageId).then(image => {
-          const frames = image.data.string('x00280008')
-          const images = []
-          console.log(frames)
-          if (frames !== undefined) {
-            for (let i = 1; i < frames; i++) {
-              images.push(`${imageId}?frame=${i}`)
-            }
-            setFile(images)
-          } else {
-            setFile([imageId])
+  useEffect(() => {
+    if (dicomId !== undefined) {
+      const imageId = cornerstoneWADOImageLoader.wadouri.fileManager.add(
+        dicom?.find(x => x._id === dicomId)?.data
+      )
+      cornerstone.loadImage(imageId).then(image => {
+        const frames = image.data.string('x00280008')
+        const images = []
+        if (frames !== undefined) {
+          for (let i = 1; i < frames; i++) {
+            images.push(`${imageId}?frame=${i}`)
           }
+          setFile(images)
+        } else {
+          setFile([imageId])
         }
-        )
       }
-    })
+      )
+    }
+  }, [dicomId])
 
   return (
-    <Spin spinning={query.isFetching} style={{ minHeight: '90vh' }}>
-    {
-      query.isError && <Alert message={query.error?.message || 'Error al cargar la imagen'} type='error' action={
-        <Button
-        onClick={query.refetch}
-        >Reintentar</Button>
-    }/>}
+    <>
     <Segmented
     onChange={(value) => setActive(value)
     }
@@ -164,7 +151,7 @@ isPlaying={play}
   </Space>
   <Button icon={<QuestionOutlined />} onClick={openNotification}>Ayuda</Button>
 </div>
-</Spin>
+</>
 
   )
 }
