@@ -7,6 +7,7 @@
     "antd": "^4.21.6",
     "axios": "^0.27.2",
     "cornerstone-web-image-loader": "^2.1.1",
+    "moment": "^2.29.4",
     "react": "^17.0.2",
     "react-cornerstone-viewport": "^4.1.4",
     "react-dom": "^17.0.2",
