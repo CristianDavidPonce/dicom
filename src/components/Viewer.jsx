@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import * as cornerstoneWADOImageLoader from 'cornerstone-wado-image-loader'
 import CornerstoneViewport from 'react-cornerstone-viewport'
 import cornerstone from 'cornerstone-core'
-import { Button, InputNumber, List, notification, Segmented, Space } from 'antd'
+import { Button, InputNumber, List, notification, Segmented, Space, Spin } from 'antd'
 import { ArrowsAltOutlined, BgColorsOutlined, CaretRightOutlined, ColumnWidthOutlined, DeleteOutlined, DragOutlined, FormOutlined, LeftOutlined, PauseOutlined, QuestionOutlined, SearchOutlined, ZoomInOutlined } from '@ant-design/icons'
 import { Context } from '../Provider'
 const openNotification = () => {
@@ -126,8 +126,8 @@ const Viewer = ({ dicomId }) => {
     ]}
   />
   {
-file &&
-<CornerstoneViewport
+file
+  ? <CornerstoneViewport
   style={
     {
       width: '100%',
@@ -142,6 +142,7 @@ activeTool={active}
 frameRate={frames}
 isPlaying={play}
   />
+  : <Spin tip={'Cargando imágenes...'} style={{ height: 'calc(100vh - 120px)', width: '100%' }}/>
 }
 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
   <Space>

@@ -13,7 +13,7 @@ const { Item } = Descriptions
 const App = () => {
   useEffect(() => {
     document.title = 'Dicom Viewer'
-  })
+  }, [])
   const queryParams = new URLSearchParams(window.location.search)
   const orden = queryParams.get('orden')
   const [drawer, setDrawer] = useState(false)

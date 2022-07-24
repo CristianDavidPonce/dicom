@@ -28,8 +28,6 @@ const LeftMenuItem = ({ dicomId, firstDicom }) => {
           data.data
         )
         setFile(imageId)
-        console.log(firstDicom)
-        console.log(dicomId)
         if (firstDicom === dicomId) {
           console.log('ok21')
           setDicomId(dicomId)
