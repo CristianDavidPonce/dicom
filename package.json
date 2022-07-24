@@ -5,6 +5,8 @@
   "dependencies": {
     "@ant-design/icons": "^4.7.0",
     "antd": "^4.21.6",
+    "antd-mobile": "^5.19.0",
+    "antd-mobile-icons": "^0.3.0",
     "axios": "^0.27.2",
     "cornerstone-web-image-loader": "^2.1.1",
     "moment": "^2.29.4",
@@ -12,6 +14,7 @@
     "react-cornerstone-viewport": "^4.1.4",
     "react-dom": "^17.0.2",
     "react-query": "^3.39.1",
+    "react-router-dom": "^6.3.0",
     "react-scripts": "^5.0.1"
   },
   "scripts": {

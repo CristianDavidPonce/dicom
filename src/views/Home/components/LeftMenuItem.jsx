@@ -1,11 +1,11 @@
 import React, { useContext, useState } from 'react'
 import { useQuery } from 'react-query'
-import api from '../api'
+import api from '../../../api'
 import PropTypes from 'prop-types'
 import * as cornerstoneWADOImageLoader from 'cornerstone-wado-image-loader'
 import CornerstoneViewport from 'react-cornerstone-viewport'
 import { Spin } from 'antd'
-import { Context } from '../Provider'
+import { Context } from '../../../Provider'
 
 const LeftMenuItem = ({ dicomId, firstDicom }) => {
   const queryParams = new URLSearchParams(window.location.search)

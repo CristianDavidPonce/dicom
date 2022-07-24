@@ -5,7 +5,7 @@ import CornerstoneViewport from 'react-cornerstone-viewport'
 import cornerstone from 'cornerstone-core'
 import { Button, InputNumber, List, notification, Segmented, Space, Spin } from 'antd'
 import { ArrowsAltOutlined, BgColorsOutlined, CaretRightOutlined, ColumnWidthOutlined, DeleteOutlined, DragOutlined, FormOutlined, LeftOutlined, PauseOutlined, QuestionOutlined, SearchOutlined, ZoomInOutlined } from '@ant-design/icons'
-import { Context } from '../Provider'
+import { Context } from '../../../Provider'
 const openNotification = () => {
   notification.open({
     message: 'Ayuda',
