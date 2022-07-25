@@ -4,7 +4,7 @@ import * as cornerstoneWADOImageLoader from 'cornerstone-wado-image-loader'
 import CornerstoneViewport from 'react-cornerstone-viewport'
 import cornerstone from 'cornerstone-core'
 import { Button, InputNumber, List, notification, Segmented, Space, Spin } from 'antd'
-import { ArrowsAltOutlined, BgColorsOutlined, CaretRightOutlined, ColumnWidthOutlined, DeleteOutlined, DragOutlined, FormOutlined, LeftOutlined, PauseOutlined, QuestionOutlined, SearchOutlined, ZoomInOutlined } from '@ant-design/icons'
+import { ArrowsAltOutlined, BgColorsOutlined, CaretRightOutlined, ColumnWidthOutlined, DeleteOutlined, DragOutlined, ForkOutlined, FormOutlined, LeftOutlined, PauseOutlined, QuestionOutlined, SearchOutlined, ZoomInOutlined } from '@ant-design/icons'
 import { Context } from '../../../Provider'
 const openNotification = () => {
   notification.open({
@@ -76,6 +76,7 @@ const Viewer = ({ dicomId }) => {
     <Segmented
     onChange={(value) => setActive(value)
     }
+    style={{ overflowX: 'auto', width: '100%' }}
     defaultValue='Wwwc'
     options={[
       {
@@ -107,6 +108,11 @@ const Viewer = ({ dicomId }) => {
         label: 'Ángulo',
         value: 'Angle',
         icon: <LeftOutlined />
+      },
+      {
+        label: 'Ángulo de Cobb',
+        value: 'CobbAngle',
+        icon: <ForkOutlined rotate={90}/>
       },
       {
         label: 'Bidireccional',
@@ -185,6 +191,7 @@ const toolsInit = [
   'Eraser',
   'Magnify',
   'Bidirectional',
+  'CobbAngle',
   // Scroll
   { name: 'StackScrollMouseWheel', mode: 'active' },
   // Touch
