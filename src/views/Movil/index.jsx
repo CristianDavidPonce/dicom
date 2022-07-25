@@ -4,7 +4,7 @@ import { Alert, Descriptions, Drawer, Skeleton } from 'antd'
 import api from '../../api'
 import { Context } from '../../Provider'
 import moment from 'moment'
-import { List } from 'antd-mobile'
+import { Collapse, List } from 'antd-mobile'
 import { EyeOutline } from 'antd-mobile-icons'
 import Viewer from './components/Viewer'
 const { Item } = Descriptions
@@ -46,7 +46,7 @@ const Movil = () => {
           lista.isLoading
             ? <Skeleton/>
             : (dicomId === undefined
-                ? <List header='Seleccione una imagen'>
+                ? <> <List header='Seleccione una imagen'>
 
            { lista.data?.data.filter(x => x.mimetype === 'application/octet-stream').map(x =>
               <List.Item key={x._id}
@@ -56,6 +56,21 @@ const Movil = () => {
 
            )}
              </List>
+             <List header='Informe'></List>
+             <Collapse>
+              <Collapse.Panel key='1' title='Informe'>
+                <p style={{ whiteSpace: 'break-spaces' }}>
+                  {result?.data?.data?.result?.informe}
+                  </p>
+              </Collapse.Panel>
+              <Collapse.Panel key='2' title='Conclusion'>
+              <p style={{ whiteSpace: 'break-spaces' }}>
+
+                {result?.data?.data?.result?.conclusion}
+              </p>
+              </Collapse.Panel>
+            </Collapse>
+             </>
                 : <Viewer dicomId={dicomId}/>)
 
     }

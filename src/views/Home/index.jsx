@@ -7,6 +7,8 @@ import Viewer from './components/Viewer'
 import { Context } from '../../Provider'
 import moment from 'moment'
 import { EyeOutlined } from '@ant-design/icons'
+import { isMobile } from 'react-device-detect'
+import { Navigate } from 'react-router-dom'
 const { Content, Sider } = Layout
 const { Item } = Descriptions
 const Home = () => {
@@ -34,6 +36,9 @@ const Home = () => {
   }
   if (lista.data?.data.filter(x => x.mimetype === 'application/octet-stream')?.length <= 0) {
     return <Alert message={'No existen archivos DCOM'} type='warning' showIcon/>
+  }
+  if (isMobile) {
+    return (<Navigate to={`movil/?orden=${orden}`}/>)
   }
   return (
 
@@ -82,17 +87,21 @@ const Home = () => {
       <div style={{ display: 'flex', justifyContent: 'center' }}>
         <Typography.Text type='secondary'>Desarrollado por Departamento Tecnología, Innova-Salud S.A 2022</Typography.Text>
       </div>
-      <Drawer visible={drawer} placement='right' onClose={() => setDrawer(false)}>
+      <Drawer visible={drawer} placement='right' onClose={() => setDrawer(false)} size={'large'}>
       <Descriptions layout='vertical' bordered size='small'>
-      <Item label='Profesional' span={3}>{result?.data?.data?.result?.doctor?.completeName}</Item>
+      <Item label='Profesional Responsable' span={3}>{result?.data?.data?.result?.doctor?.completeName}</Item>
       <Item label='Paciente' span={3}>{result?.data?.data?.result?.patient?.completeName}</Item>
       <Item label='Fecha' span={3}>{result?.data?.data?.result?.attention?.date && moment(result?.attention?.date).format('YYYY-MM-DD')}</Item>
       <Item label='Servicio' span={3}>{result?.data?.data?.result?.children?.map(x => <>
       {x.descripcion}
       <br />
       </>)}</Item>
-      <Item label='Infome' span={3}>{result?.data?.data?.result?.informe}</Item>
-      <Item label='Conclusión' span={3}>{result?.data?.data?.result?.conclusion}</Item>
+      <Item label='Infome' span={3} contentStyle={{ whiteSpace: 'break-spaces' }}>
+      {result?.data?.data?.result?.informe}
+</Item>
+      <Item label='Conclusión' span={3}
+      contentStyle={{ whiteSpace: 'break-spaces' }}
+      >{result?.data?.data?.result?.conclusion}</Item>
     </Descriptions>
       </Drawer>
   </Layout>

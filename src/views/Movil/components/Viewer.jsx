@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useRef, useState } from 'react'
 import PropTypes from 'prop-types'
 import * as cornerstoneWADOImageLoader from 'cornerstone-wado-image-loader'
 import CornerstoneViewport from 'react-cornerstone-viewport'
@@ -13,6 +13,7 @@ const anchors = [80, window.innerHeight * 0.15, window.innerHeight * 0.9]
 
 const Viewer = ({ dicomId }) => {
   const [play, setPlay] = useState(false)
+  const ref = useRef()
   const [active, setActive] = useState('Wwwc')
   const { setDicomId } = useContext(Context)
   const [file, setFile] = useState()
@@ -44,17 +45,20 @@ const Viewer = ({ dicomId }) => {
 
   return (
     <>
-    <NavBar back='Regresar' onBack={() => setDicomId(undefined)}>
+    <NavBar back='Regresar'
+      right={options.find(x => x.value === active)?.icon}
+      onBack={() => setDicomId(undefined)}>
           Visualizador
-        </NavBar>
+    </NavBar>
 
   {
     file
       ? <CornerstoneViewport
     style={
       {
-        width: '100%',
-        height: 'calc(100vh - 120px)'
+        minWidth: '100%',
+        height: 'calc(100vh - 120px)',
+        flex: '1'
       }
     }
     imageIds={
@@ -65,10 +69,10 @@ const Viewer = ({ dicomId }) => {
     frameRate={frames}
     isPlaying={play}
     />
-      : <Spin tip={'Cargando imagen...'} style={{ height: 'calc(100vh - 120px)', width: '100%' }}/>
+      : <Spin tip={'Cargando imagen...'} style={{ width: '100%' }}/>
 }
 
-<FloatingPanel anchors={anchors}>
+<FloatingPanel ref={ref} anchors={anchors}>
 <List>
   <List.Item>
   <Space>
@@ -77,13 +81,18 @@ const Viewer = ({ dicomId }) => {
     <InputNumber value={frames} onChange={(x) => setFrames(x)} prefix={'fps'}/>
   </Space>
   </List.Item></List>
-<List header='Seleccione una herramienta'>
-          {options.map((item, index) => (
-            <List.Item key={index} prefix={item.icon}
-            onClick={() => setActive(item.value)}
-            >{item.label}</List.Item>
-          ))}
-        </List>
+  <List header='Seleccione una herramienta'>
+    {options.map((item, index) => (
+      <List.Item
+        key={index}
+        prefix={item.icon}
+        onClick={() => {
+          setActive(item.value)
+          ref.current.setHeight(80)
+        }}
+      >{item.label}</List.Item>
+    ))}
+  </List>
 </FloatingPanel>
 </>
 
