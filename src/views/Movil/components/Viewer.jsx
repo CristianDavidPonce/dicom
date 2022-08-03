@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import * as cornerstoneWADOImageLoader from 'cornerstone-wado-image-loader'
 import CornerstoneViewport from 'react-cornerstone-viewport'
 import cornerstone from 'cornerstone-core'
-import { Button, InputNumber, Space, Spin } from 'antd'
+import { Button, InputNumber, Progress, Space, Spin } from 'antd'
 import { ArrowsAltOutlined, BgColorsOutlined, CaretRightOutlined, ColumnWidthOutlined, DeleteOutlined, DragOutlined, FormOutlined, LeftOutlined, PauseOutlined, SearchOutlined, ZoomInOutlined } from '@ant-design/icons'
 import api from '../../../api'
 import { useQuery } from 'react-query'
@@ -20,9 +20,17 @@ const Viewer = ({ dicomId }) => {
   const [frames, setFrames] = useState(10)
   const queryParams = new URLSearchParams(window.location.search)
   const orden = queryParams.get('orden')
+  const [progress, setProgress] = useState(0)
   useQuery(dicomId,
     async () => await api.get(`/user/public/imagen/ordenes/${orden}/attachments/${dicomId}`,
-      { responseType: 'blob' }), {
+      {
+        responseType: 'blob',
+        onDownloadProgress: (x) => {
+          setProgress(Math.round(
+            (x.loaded * 100) / x.total
+          ))
+        }
+      }), {
       staleTime: 'Infinity',
       onSuccess: (data) => {
         const imageId = cornerstoneWADOImageLoader.wadouri.fileManager.add(
@@ -50,7 +58,6 @@ const Viewer = ({ dicomId }) => {
       onBack={() => setDicomId(undefined)}>
           Visualizador
     </NavBar>
-
   {
     file
       ? <CornerstoneViewport
@@ -69,7 +76,10 @@ const Viewer = ({ dicomId }) => {
     frameRate={frames}
     isPlaying={play}
     />
-      : <Spin tip={'Cargando imagen...'} style={{ width: '100%' }}/>
+      : <Spin tip={<>
+      <div>Cargando imagen...</div>
+      <Progress percent={progress} />
+      </>} style={{ width: '100%', height: '100%' }}/>
 }
 
 <FloatingPanel ref={ref} anchors={anchors}>

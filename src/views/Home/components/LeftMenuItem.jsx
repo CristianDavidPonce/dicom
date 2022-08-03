@@ -4,7 +4,7 @@ import api from '../../../api'
 import PropTypes from 'prop-types'
 import * as cornerstoneWADOImageLoader from 'cornerstone-wado-image-loader'
 import CornerstoneViewport from 'react-cornerstone-viewport'
-import { Spin } from 'antd'
+import { Progress, Spin } from 'antd'
 import { Context } from '../../../Provider'
 
 const LeftMenuItem = ({ dicomId, firstDicom }) => {
@@ -12,9 +12,17 @@ const LeftMenuItem = ({ dicomId, firstDicom }) => {
   const { setDicom, dicom, setDicomId } = useContext(Context)
   const orden = queryParams.get('orden')
   const [file, setFile] = useState()
+  const [progress, setProgress] = useState(0)
   const item = useQuery(dicomId,
     async () => await api.get(`/user/public/imagen/ordenes/${orden}/attachments/${dicomId}`,
-      { responseType: 'blob' }), {
+      {
+        responseType: 'blob',
+        onDownloadProgress: (x) => {
+          setProgress(Math.round(
+            (x.loaded * 100) / x.total
+          ))
+        }
+      }), {
       staleTime: 'Infinity',
       onSuccess: (data) => {
         const datos = dicom || []
@@ -35,7 +43,7 @@ const LeftMenuItem = ({ dicomId, firstDicom }) => {
       }
     })
   return (
-    <Spin spinning={item.isLoading} style={{ width: '180px' }}>
+    <Spin spinning={item.isLoading} style={{ width: '180px' }} tip={<Progress percent={progress}/>}>
      { file &&
       <CornerstoneViewport
         style={
