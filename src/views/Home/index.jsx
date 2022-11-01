@@ -91,17 +91,17 @@ const Home = () => {
       <Descriptions layout='vertical' bordered size='small'>
       <Item label='Profesional Responsable' span={3}>{result?.data?.data?.result?.doctor?.completeName}</Item>
       <Item label='Paciente' span={3}>{result?.data?.data?.result?.patient?.completeName}</Item>
-      <Item label='Fecha' span={3}>{result?.data?.data?.result?.attention?.date && moment(result?.attention?.date).format('YYYY-MM-DD')}</Item>
-      <Item label='Servicio' span={3}>{result?.data?.data?.result?.children?.map(x => <>
+      <Item label='Fecha' span={3}>{result?.data?.data?.result?.date && moment(result?.date).format('YYYY-MM-DD')}</Item>
+      <Item label='Servicio' span={3}>{result?.data?.data?.result?.services?.map(x => <>
       {x.descripcion}
       <br />
       </>)}</Item>
       <Item label='Infome' span={3} contentStyle={{ whiteSpace: 'break-spaces' }}>
-      {result?.data?.data?.result?.informe}
+      {result?.data?.data?.result?.orden?.informe}
 </Item>
       <Item label='Conclusión' span={3}
       contentStyle={{ whiteSpace: 'break-spaces' }}
-      >{result?.data?.data?.result?.conclusion}</Item>
+      >{result?.data?.data?.result?.orden?.conclusion}</Item>
     </Descriptions>
       </Drawer>
   </Layout>
