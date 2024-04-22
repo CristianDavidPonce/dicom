@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useState } from 'react'
+import React, { useRef, useState } from 'react'
 import PropTypes from 'prop-types'
 import * as cornerstoneWADOImageLoader from 'cornerstone-wado-image-loader'
 import CornerstoneViewport from 'react-cornerstone-viewport'
@@ -17,34 +17,30 @@ import {
   SearchOutlined,
   ZoomInOutlined,
 } from '@ant-design/icons'
-import api from '../../../api'
+import axios from 'axios'
 import { useQuery } from 'react-query'
-import { Context } from '../../../Provider'
+
 import { FloatingPanel, NavBar, List } from 'antd-mobile'
 const anchors = [80, window.innerHeight * 0.15, window.innerHeight * 0.9]
 
-const Viewer = ({ dicomId }) => {
+const Viewer = ({ url }) => {
   const [play, setPlay] = useState(false)
   const ref = useRef()
   const [active, setActive] = useState('Wwwc')
-  const { setDicomId } = useContext(Context)
+
   const [file, setFile] = useState()
   const [frames, setFrames] = useState(10)
-  const queryParams = new URLSearchParams(window.location.search)
-  const orden = queryParams.get('orden')
+
   const [progress, setProgress] = useState(0)
   useQuery(
-    dicomId,
+    'key',
     async () =>
-      await api.get(
-        `/user/public/imagen/ordenes/${orden}/attachments/${dicomId}`,
-        {
-          responseType: 'blob',
-          onDownloadProgress: (x) => {
-            setProgress(Math.round((x.loaded * 100) / x.total))
-          },
-        }
-      ),
+      await axios.get(url, {
+        responseType: 'blob',
+        onDownloadProgress: (x) => {
+          setProgress(Math.round((x.loaded * 100) / x.total))
+        },
+      }),
     {
       staleTime: 'Infinity',
       onSuccess: (data) => {
@@ -64,16 +60,13 @@ const Viewer = ({ dicomId }) => {
           }
         })
       },
+      enabled: url !== undefined,
     }
   )
 
   return (
     <>
-      <NavBar
-        back="Regresar"
-        right={options.find((x) => x.value === active)?.icon}
-        onBack={() => setDicomId(undefined)}
-      >
+      <NavBar right={options.find((x) => x.value === active)?.icon}>
         Visualizador
       </NavBar>
       {file ? (
@@ -139,7 +132,7 @@ const Viewer = ({ dicomId }) => {
 
 export default Viewer
 Viewer.propTypes = {
-  dicomId: PropTypes.string,
+  url: PropTypes.string,
 }
 
 const toolsInit = [

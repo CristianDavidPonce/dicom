@@ -9,21 +9,19 @@ const Provider = ({ children }) => {
 
   return (
     <Context.Provider
-        value={
-          {
-            dicom,
-            setDicom,
-            dicomId,
-            setDicomId
-          }
-        }
+      value={{
+        dicom,
+        setDicom,
+        dicomId,
+        setDicomId,
+      }}
     >
-  {children}
-</Context.Provider>
+      {children}
+    </Context.Provider>
   )
 }
 
 export default Provider
 Provider.propTypes = {
-  children: PropTypes.node
+  children: PropTypes.node,
 }

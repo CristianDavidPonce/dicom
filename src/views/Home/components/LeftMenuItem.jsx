@@ -13,20 +13,23 @@ const LeftMenuItem = ({ dicomId, firstDicom }) => {
   const orden = queryParams.get('orden')
   const [file, setFile] = useState()
   const [progress, setProgress] = useState(0)
-  const item = useQuery(dicomId,
-    async () => await api.get(`/user/public/imagen/ordenes/${orden}/attachments/${dicomId}`,
-      {
-        responseType: 'blob',
-        onDownloadProgress: (x) => {
-          setProgress(Math.round(
-            (x.loaded * 100) / x.total
-          ))
+  const item = useQuery(
+    dicomId,
+    async () =>
+      await api.get(
+        `/user/public/imagen/ordenes/${orden}/attachments/${dicomId}`,
+        {
+          responseType: 'blob',
+          onDownloadProgress: (x) => {
+            setProgress(Math.round((x.loaded * 100) / x.total))
+          },
         }
-      }), {
+      ),
+    {
       staleTime: 'Infinity',
       onSuccess: (data) => {
         const datos = dicom || []
-        if (dicom?.some(x => x._id === dicomId)) {
+        if (dicom?.some((x) => x._id === dicomId)) {
           console.log('hola')
         } else {
           datos.push({ _id: dicomId, data: data.data })
@@ -40,26 +43,25 @@ const LeftMenuItem = ({ dicomId, firstDicom }) => {
           console.log('ok21')
           setDicomId(dicomId)
         }
-      }
-    })
+      },
+    }
+  )
   return (
-    <Spin spinning={item.isLoading} style={{ width: '180px' }} tip={<Progress percent={progress}/>}>
-     { file &&
-      <CornerstoneViewport
-        style={
-          {
+    <Spin
+      spinning={item.isLoading}
+      style={{ width: '180px' }}
+      tip={<Progress percent={progress} />}
+    >
+      {file && (
+        <CornerstoneViewport
+          style={{
             width: '180px',
-            height: '180px'
-          }
-        }
-        imageIds={
-          [file]
-        }
-        viewportOverlayComponent={() => (
-          <></>
-        )}
+            height: '180px',
+          }}
+          imageIds={[file]}
+          viewportOverlayComponent={() => <></>}
         />
-      }
+      )}
     </Spin>
   )
 }
@@ -68,5 +70,5 @@ export default LeftMenuItem
 
 LeftMenuItem.propTypes = {
   dicomId: PropTypes.string,
-  firstDicom: PropTypes.string
+  firstDicom: PropTypes.string,
 }

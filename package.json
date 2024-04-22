@@ -2,6 +2,7 @@
   "name": "dicom",
   "version": "0.1.0",
   "private": true,
+  "author": "Cristian Ponce",
   "dependencies": {
     "@ant-design/icons": "^4.7.0",
     "antd": "^4.21.6",
@@ -44,10 +45,13 @@
   },
   "devDependencies": {
     "eslint": "^8.19.0",
+    "eslint-config-prettier": "^9.1.0",
     "eslint-config-standard": "^17.0.0",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-n": "^15.2.4",
+    "eslint-plugin-prettier": "^5.1.3",
     "eslint-plugin-promise": "^6.0.0",
-    "eslint-plugin-react": "^7.30.1"
+    "eslint-plugin-react": "^7.30.1",
+    "prettier": "^3.2.5"
   }
 }
